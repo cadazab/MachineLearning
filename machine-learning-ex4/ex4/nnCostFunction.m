@@ -62,11 +62,30 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% Part 1
+X = [ones(m,1),X];
+a2 = sigmoid(X*Theta1');
+a2 = [ones(m,1),a2];
+h = sigmoid(a2*Theta2');
+
+size(h)
+for i = 1:m
+	Y = zeros(10,1);
+	Y(y(i)) = 1;
+	for k = 1:num_labels
+		J = J + (-Y(k)*log(h(i,k))) - ((1 - Y(k))*log(1-h(i,k)));
+	end
+end
+
+%Regularization
+num_col_t1 = size(Theta1,2);
+num_col_t2 = size(Theta2,2);
 
 
+R = sum(sum(Theta1(:,[2:num_col_t1]).^2)) + sum(sum(Theta2(:,[2:num_col_t2]).^2));
+R = (R*lambda) / (2*m);
 
-
-
+J = J/m + R;
 
 
 
