@@ -7,6 +7,9 @@ function p = predict(Theta1, Theta2, X)
 m = size(X, 1);
 num_labels = size(Theta2, 1);
 
+%Add the column of ones
+X = [ones(m, 1) X];
+
 % You need to return the following variables correctly 
 p = zeros(size(X, 1), 1);
 
@@ -23,10 +26,14 @@ p = zeros(size(X, 1), 1);
 
 
 
+p1 = sigmoid(X*Theta1');
 
+%Add Ones
+p1 = [ones(size(p1,1),1) p1];
 
+p = sigmoid(p1*Theta2');
 
-
+[l,p] = max(p,[],2);
 
 
 % =========================================================================

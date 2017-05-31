@@ -68,24 +68,56 @@ a2 = sigmoid(X*Theta1');
 a2 = [ones(m,1),a2];
 h = sigmoid(a2*Theta2');
 
-size(h)
+yv = zeros(m, num_labels);
 for i = 1:m
 	Y = zeros(10,1);
 	Y(y(i)) = 1;
+	yv(i, y(i)) = 1; % yv = vectorized form of y
+	
 	for k = 1:num_labels
 		J = J + (-Y(k)*log(h(i,k))) - ((1 - Y(k))*log(1-h(i,k)));
 	end
 end
 
 %Regularization
-num_col_t1 = size(Theta1,2);
-num_col_t2 = size(Theta2,2);
-
-
-R = sum(sum(Theta1(:,[2:num_col_t1]).^2)) + sum(sum(Theta2(:,[2:num_col_t2]).^2));
+R = sum(sum(Theta1(:,[2:end]).^2)) + sum(sum(Theta2(:,[2:end]).^2));
 R = (R*lambda) / (2*m);
 
 J = J/m + R;
+
+%Part 2
+for t = 1:m
+    
+    %Fordward Propagation
+    a1 = X(t,:);
+    a1 = [1 a1]; % dim = 1 x 401
+    
+    a2 = sigmoid(a1*Theta1); % size(Theta1) = 25x401 
+    a2 = [1 a2]; % dim = 1x26
+    
+    size(a2)
+    size(Theta2)
+    a3 = sigmoid(a2*Theta2);  %size(Theta1)=10x26 size(a3)=1x10 
+    
+    %Sigmas
+    sigma_3 = a3 - yv(i);
+    sigma_2 = (Theta2'*sigma_3) .* sigmoidGradient(a1*Theta1');
+    
+    %Gradient
+    gradient_1 = 0;
+    gradient_1 = gradient_1 + sigma_2*a1';
+    
+    sigma_2 = sigma_2(2:end);
+    gradient_2 = 0;
+    gradient_2 = gradient_2 + sigma_3*a2';
+    
+    Theta1_grad = gradient_1/m;
+    Theta2_grad = gradient_2/m;
+    
+    
+    
+end
+
 
 
 

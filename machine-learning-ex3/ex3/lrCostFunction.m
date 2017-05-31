@@ -36,17 +36,15 @@ grad = zeros(size(theta));
 %           grad = grad + YOUR_CODE_HERE (using the temp variable)
 %
 
+theta_reg = theta;
+theta_reg(1)=0;  %not be regularizing the theta(1) parameter
 
+J = (-y'*log(sigmoid(X*theta))-(1-y')*log(1-sigmoid(X*theta)))/m + (lambda/(2*m)) * (theta_reg'*theta_reg);
 
-
-
-
-
-
+grad = (X'*(sigmoid(X*theta)-y))/m + (lambda/m)*theta_reg;
 
 
 % =============================================================
 
-grad = grad(:);
 
 end
