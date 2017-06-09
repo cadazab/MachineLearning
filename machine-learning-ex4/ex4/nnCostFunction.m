@@ -86,50 +86,44 @@ R = (R*lambda) / (2*m);
 J = J/m + R;
 
 %Part 2
+bigDelta_1 = 0;
+bigDelta_2 = 0;
+
 for t = 1:m
     
     %Fordward Propagation
-    a1 = X(t,:);
-    a1 = [1 a1]; % dim = 1 x 401
+    a1 = X(t,:); % dim = 1 x 401
+
+    z2 = a1*Theta1'; % size(Theta1) = 25x401  size(z2)=1x25
+    a2 = sigmoid(z2); % dim = 1x25
+    a2 = [1 a2]; %dim = 1x26
     
-    a2 = sigmoid(a1*Theta1); % size(Theta1) = 25x401 
-    a2 = [1 a2]; % dim = 1x26
+    z3 = a2*Theta2'; %size(Theta2) = 10x26
+    a3 = sigmoid(z3);  %size(Theta1)=10x26 size(a3)=1x10 
     
-    size(a2)
-    size(Theta2)
-    a3 = sigmoid(a2*Theta2);  %size(Theta1)=10x26 size(a3)=1x10 
+    %Deltas
+    delta_3 = a3 - yv(t,:); %dim = 1x10
+
+    delta_2 = (delta_3*Theta2) .* a2 .* (1 - a2);
+    delta_2 = delta_2(2:end); %dim=1x25
     
-    %Sigmas
-    sigma_3 = a3 - yv(i);
-    sigma_2 = (Theta2'*sigma_3) .* sigmoidGradient(a1*Theta1');
-    
-    %Gradient
-    gradient_1 = 0;
-    gradient_1 = gradient_1 + sigma_2*a1';
-    
-    sigma_2 = sigma_2(2:end);
-    gradient_2 = 0;
-    gradient_2 = gradient_2 + sigma_3*a2';
-    
-    Theta1_grad = gradient_1/m;
-    Theta2_grad = gradient_2/m;
-    
-    
-    
+    bigDelta_1 = bigDelta_1 + delta_2'*a1;
+    bigDelta_2 = bigDelta_2 + delta_3'*a2;
+
 end
 
+Theta1_grad = bigDelta_1./m;
+Theta2_grad = bigDelta_2./m;
 
+%Part 3
+Theta1_reg = (lambda/m)*Theta1;
+Theta1_reg(:,1) = 0;
 
+Theta2_reg = (lambda/m)*Theta2;
+Theta2_reg(:,1) = 0;
 
-
-
-
-
-
-
-
-
-
+Theta1_grad = Theta1_grad + Theta1_reg;
+Theta2_grad = Theta2_grad + Theta2_reg;
 
 % -------------------------------------------------------------
 
